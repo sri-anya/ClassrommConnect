@@ -42,7 +42,7 @@ if __name__ == "__main__":
         for _ in range(3):
             activity = Activity(
                 name=random.choice(["Scavenger hunt","Climb a tree","Teddy bears' picnic","Getting hands dirty","Dressing up","Hopscotch","Chill out den"]).capitalize() + " Day",
-                description=fake.text(max_nb_chars=200),
+                description="we will be having "+random.choice(["Scavenger hunt","Climb a tree","Teddy bears' picnic","Getting hands dirty","Dressing up","Hopscotch","Chill out den"]).lower()+" day",
                 date=fake.date_between(start_date='-1y', end_date='today')
             )
             activities.append(activity)

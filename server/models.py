@@ -11,6 +11,15 @@ from config import db, bcrypt
 # Models go here!
 class Class(db.Model, SerializerMixin):
     __tablename__ = 'classes'
+
+    serialize_rules = (
+        '-activity.classes_with_activities',
+        '-class_students',
+        '-class_teachers',
+        '-students.classes',
+        '-teachers.classes'
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     schedule = db.Column(db.String, nullable=False)
@@ -34,11 +43,17 @@ class Class(db.Model, SerializerMixin):
     
 class Student(db.Model, SerializerMixin):
     __tablename__ = 'students'
+
+    serialize_rules = (
+        '-class_students.student',
+        '-class_students.class_details.class_teachers.teacher',  # Avoid nesting teachers in classes
+        '-class_students.class_details.activity.classes_with_activities',  # Avoid nesting activities in classes
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     
-
     #Relationships: Many-to-many with Class
     class_students = db.relationship(
         'Class_Student', back_populates='student', cascade='all, delete-orphan')
@@ -47,6 +62,13 @@ class Student(db.Model, SerializerMixin):
     
 class Teacher(db.Model, SerializerMixin):
     __tablename__ = 'teachers'
+
+    serialize_rules = (
+        '-class_teachers.teacher',
+        '-class_teachers.class_details_for_teachers.students.class_students.student',  # Avoid nesting students in classes
+        '-class_teachers.class_details_for_teachers.activity.classes_with_activities',  # Avoid nesting activities in classes
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     
@@ -58,6 +80,13 @@ class Teacher(db.Model, SerializerMixin):
 
 class Activity(db.Model, SerializerMixin):
     __tablename__ = 'activities'
+
+    serialize_rules = (
+        '-classes_with_activities.activity',
+        '-classes_with_activities.class_students.student',  # Avoid nesting students
+        '-classes_with_activities.class_teachers.teacher',  # Avoid nesting teachers
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text, nullable=False)
