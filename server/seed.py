@@ -30,7 +30,9 @@ if __name__ == "__main__":
         for _ in range(5):
             teacher = Teacher(
                 name=fake.name()
+                username=fake.use
             )
+            teacher.password_hash = "Teacher"
             teachers.append(teacher)
         db.session.add_all(teachers)
         db.session.commit()
