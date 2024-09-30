@@ -29,8 +29,8 @@ if __name__ == "__main__":
         teachers = []
         for _ in range(5):
             teacher = Teacher(
-                name=fake.name()
-                username=fake.use
+                name=fake.profile(fields=['name'])['name'],
+                username=fake.profile(fields=['username'])['username']
             )
             teacher.password_hash = "Teacher"
             teachers.append(teacher)

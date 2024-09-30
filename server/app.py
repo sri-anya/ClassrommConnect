@@ -65,11 +65,12 @@ class Students(Resource):
 
         return make_response(new_student.to_dict(), 201)
     
-class Teachers(Resource):
+class TeachersClasses(Resource):
 
-    def get(self):
-        teachers = [teacher.to_dict() for teacher in Teacher.query.all()]
-        return make_response(jsonify(teachers), 200)
+    def get(self, id):
+        teacher = Teacher.query.filter_by(id=id).first()
+        teachersClasses = [classes.to_dict() for classes in teacher.classes]
+        return make_response(jsonify(teachersClasses), 200)
     
 class Classes(Resource):
 
@@ -83,7 +84,7 @@ class Classes(Resource):
         new_class = Student(
             name=data['name'],
             schedule=data['schedule'],
-            room_number=data['room_number']
+            room_number=data['room_number'],
             activity_id=data['activity_id']
         )
 
@@ -130,10 +131,10 @@ class Login(Resource):
     def post(self):
 
         data = request.get_json()
-        email = data.get('username')
+        username = data.get('username')
         password = data.get('password')
 
-        teacher = Teacher.query.filter(Teacher.email == email).first()
+        teacher = Teacher.query.filter(Teacher.username == username).first()
 
         if teacher and teacher.authenticate(password):
 
@@ -145,68 +146,24 @@ class Login(Resource):
 class CheckSession(Resource):
 
     def get(self):
-        user_id = session.get('user_id')
-        if user_id:
-            user = User.query.filter(User.id == user_id).first()
-            if user:
-                return user.to_dict(), 200
+        teacher_id = session.get('teacher_id')
+        if teacher_id:
+            teacher = Teacher.query.filter(Teacher.id == teacher_id).first()
+            if teacher:
+                return teacher.to_dict(), 200
         
         return {}, 401
     
 class Logout(Resource):
     def delete(self):
-        if session['user_id'] == None:
+        if session['teacher_id'] == None:
             return {}, 401
         
-        session['user_id'] = None
+        session['teacher_id'] = None
 
         return {}, 204
-    
-class Signup(Resource):
-    def get(self):
-        return {"message": "Signup get method"}, 200
-
-    def post(self):
-        data = request.get_json()
-        name = data.get('name')
-        email = data.get('email')
-        password = data.get('password')
-        password_confirmation = data.get('password_confirmation')
-        image_url = data.get('image_url')
-        role = data.get('role')
-
-        errors = []
-
-        # # Validate input
-        if not email:
-            return ({'errors': 'email is required'}), 422
-        if not password:
-            return ({'errors': 'password is required'}), 422
-       
-        if password != password_confirmation:
-            return {'errors':'Password and confirmation do not match.'}, 422
-        if len(password) < 6:
-            return {'errors':'Password must be at least 6 characters long.'}, 422
-        # if User.query.filter_by(email=email).first():
-        #     return {'Username already exists.'}, 422
-
-        
-        # Create new user
-        new_user = User(name=name, email=email, image_url=image_url, role=role)
-        new_user.password_hash = password
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-
-            # Save user ID in session
-            session['user_id'] = new_user.id
-
-            # Return success response
-            return new_user.to_dict(), 201
-        except:
-            return {"unauthorized action"}, 422
-        
-api.add_resource(Teachers, '/teachers')
+                
+api.add_resource(TeachersClasses, '/teachers/<int:id>/classes')
 api.add_resource(Students, '/students')
 api.add_resource(Classes, '/classes')
 api.add_resource(StudentByID, '/students/<int:id>')
@@ -214,7 +171,6 @@ api.add_resource(ClassByID, '/classes/<int:id>')
 api.add_resource(Login, '/login')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Logout, '/logout', endpoint='logout')
-api.add_resource(Signup, '/signup', endpoint='signup')
 
 @app.errorhandler(NotFound)
 def handle_not_found(e):
