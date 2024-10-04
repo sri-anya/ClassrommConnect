@@ -15,12 +15,13 @@ class Class(db.Model, SerializerMixin):
 
     serialize_rules = (
         '-activity.classes_with_activities',
-        '-class_students.student',
+        # '-class_students.student',
         '-class_students.class_details',
-        '-class_teachers',
+        
+        '-class_teachers.class_details_for_teachers',
         # '-students.classes',
         "-activity_id",
-        '-teachers.classes'
+        # '-teachers.classes'
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -49,9 +50,10 @@ class Student(db.Model, SerializerMixin):
     __tablename__ = 'students'
 
     serialize_rules = (
-        '-class_students.student',
-        '-class_students.class_details.class_teachers.teacher',  # Avoid nesting teachers in classes
-        '-class_students.class_details.activity.classes_with_activities',  # Avoid nesting activities in classes
+        "-class_students",
+        # '-class_students.student',
+        # '-class_students.class_details',  # Avoid nesting teachers in classes
+        # '-class_students.class_details.activity.classes_with_activities',  # Avoid nesting activities in classes
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -68,10 +70,10 @@ class Teacher(db.Model, SerializerMixin):
     __tablename__ = 'teachers'
 
     serialize_rules = (
-        '-class_teachers.teacher',
-       
-        # '-class_teachers.class_details_for_teachers.students.class_students.student',  # Avoid nesting students in classes
-        # '-class_teachers.class_details_for_teachers.activity.classes_with_activities',  # Avoid nesting activities in classes
+        # '-class_teachers',
+       '-class_teachers.teacher.class_teachers',
+        '-class_teachers.class_details_for_teachers.class_teachers',  # Avoid nesting students in classes
+    #    '-class_teachers.class_details_for_teachers.activity.classes_with_activities',  # Avoid nesting activities in classes
     )
 
     id = db.Column(db.Integer, primary_key=True)

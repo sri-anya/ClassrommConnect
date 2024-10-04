@@ -50,7 +50,7 @@ const Classes = () => {
                                         {classItem.class_students && classItem.class_students.length > 0 ? (
                                             classItem.class_students.map((student, studentIndex) => (
                                                 <span key={studentIndex}>
-                                                    {student.name || `Student ID: ${student.student_id}`} {/* Adjust if you have student name */}
+                                                    {student.name || ` ${student.student.name}`} {/* Adjust if you have student name */}
                                                     {studentIndex < classItem.class_students.length - 1 ? ', ' : ''}
                                                 </span>
                                             ))
