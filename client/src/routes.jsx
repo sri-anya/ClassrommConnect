@@ -1,7 +1,8 @@
 import ErrorPage from './components/ErrorPage';
 import App from "./App";
-import Home from './components/Home';
+import Students from './components/Students';
 import TeacherInfo from './components/TeacherInfo';
+import Classes from './components/Classes';
 
 const routes = [
     {
@@ -10,18 +11,17 @@ const routes = [
         errorElement: <ErrorPage />,
         children: [
             {
-                path: "/",
-                element: <Home />,
-                errorElement: <ErrorPage />,
+                path: "/students",
+                element: <Students />,
             },
             {
                 path: "/teacher-info",
                 element: <TeacherInfo />
             },
-            // {
-            //     path: "/tickets",
-            //     element: <TicketsContainer />,
-            // },
+            {
+                path: "/classes",
+                element: <Classes />,
+            },
             // {
             //     path: "/tickets/:ticketId",
             //     element: <SingleTicketPage/>

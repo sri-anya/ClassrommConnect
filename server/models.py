@@ -11,12 +11,15 @@ from config import db, bcrypt
 # Models go here!
 class Class(db.Model, SerializerMixin):
     __tablename__ = 'classes'
+    # serialize_only= {'students'}
 
     serialize_rules = (
         '-activity.classes_with_activities',
-        '-class_students',
+        '-class_students.student',
+        '-class_students.class_details',
         '-class_teachers',
-        '-students.classes',
+        # '-students.classes',
+        "-activity_id",
         '-teachers.classes'
     )
 
@@ -25,6 +28,7 @@ class Class(db.Model, SerializerMixin):
     schedule = db.Column(db.String, nullable=False)
     room_number = db.Column(db.String, nullable=False)
     activity_id = db.Column(db.Integer(), db.ForeignKey('activities.id'))
+    number_of_students = db.Column(db.Integer, default=10)
 
      # Relationships: activity belongs to a class
     activity = db.relationship('Activity', back_populates="classes_with_activities")
@@ -65,8 +69,9 @@ class Teacher(db.Model, SerializerMixin):
 
     serialize_rules = (
         '-class_teachers.teacher',
-        '-class_teachers.class_details_for_teachers.students.class_students.student',  # Avoid nesting students in classes
-        '-class_teachers.class_details_for_teachers.activity.classes_with_activities',  # Avoid nesting activities in classes
+       
+        # '-class_teachers.class_details_for_teachers.students.class_students.student',  # Avoid nesting students in classes
+        # '-class_teachers.class_details_for_teachers.activity.classes_with_activities',  # Avoid nesting activities in classes
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -112,6 +117,8 @@ class Activity(db.Model, SerializerMixin):
     classes_with_activities = db.relationship('Class', back_populates='activity', cascade='all, delete-orphan') 
     
 class Class_Student(db.Model, SerializerMixin):
+
+    
     __tablename__ = 'class_students'
     id = db.Column(db.Integer, primary_key=True)
     # Foreign key to store the class id

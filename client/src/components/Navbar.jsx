@@ -60,9 +60,9 @@ const Navbar = ({ teacher, setTeacher }) => {
                     <li>
                         <Link
                             className="w-full text-left p-2 hover:bg-gray-700 transition duration-200 cursor-pointer"
-                            to="/classrooms" onClick={()=>setWelcome(false)}
+                            to="/classes" onClick={()=>setWelcome(false)}
                         >
-                            Classrooms
+                            Classes
                         </Link>
                     </li>
                 </ul>
