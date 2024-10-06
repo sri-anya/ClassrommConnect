@@ -11,7 +11,6 @@ from config import db, bcrypt
 # Models go here!
 class Class(db.Model, SerializerMixin):
     __tablename__ = 'classes'
-    # serialize_only= {'students'}
 
     serialize_rules = (
         '-activity.classes_with_activities',
@@ -50,9 +49,10 @@ class Student(db.Model, SerializerMixin):
     __tablename__ = 'students'
 
     serialize_rules = (
-        "-class_students",
-        # '-class_students.student',
-        # '-class_students.class_details',  # Avoid nesting teachers in classes
+        # "-class_students",
+        '-class_students.class_details.class_teachers',
+        '-class_students.student',
+        '-class_students.class_details.class_students',  # Avoid nesting teachers in classes
         # '-class_students.class_details.activity.classes_with_activities',  # Avoid nesting activities in classes
     )
 
