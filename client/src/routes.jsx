@@ -3,6 +3,8 @@ import App from "./App";
 import Students from './components/Students';
 import TeacherInfo from './components/TeacherInfo';
 import Classes from './components/Classes';
+import AddStudent from './components/AddStudent';
+import StudentPage from './components/StudentPage';
 
 const routes = [
     {
@@ -22,10 +24,14 @@ const routes = [
                 path: "/classes",
                 element: <Classes />,
             },
-            // {
-            //     path: "/tickets/:ticketId",
-            //     element: <SingleTicketPage/>
-            // }
+            {
+                path: "/add-student",
+                element: <AddStudent />,
+            },
+            {
+                path: "/students/:studentId",
+                element: <StudentPage/>
+            }
         ]
     }
 

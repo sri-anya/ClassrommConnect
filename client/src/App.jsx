@@ -45,7 +45,7 @@ export default function App() {
       }
     };
     fetchStudents();
-  }, []);
+  }, [students]);
 
   if (!teacher) return <Login onLogin={setTeacher} />;
 
