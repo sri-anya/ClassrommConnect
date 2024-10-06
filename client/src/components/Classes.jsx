@@ -25,7 +25,7 @@ const Classes = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {console.log(classes)}
+                    
                     {classes.map((classItem, index) => (
                         <React.Fragment key={index}>
                             <tr>

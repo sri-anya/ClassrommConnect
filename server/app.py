@@ -10,7 +10,7 @@ from werkzeug.exceptions import NotFound
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import Student, Teacher, Class, Activity
+from models import Student, Teacher, Class, Activity, Class_Student, Class_Teacher
 
 class StudentByID(Resource):
 
@@ -46,6 +46,39 @@ class StudentByID(Resource):
         else:
             return make_response({"message":"record not found"},404)
         
+# class Students(Resource):
+
+#     def get(self):
+#         students = [student.to_dict() for student in Student.query.all()]
+#         return make_response(jsonify(students), 200)
+    
+#     def post(self):
+#         data = request.get_json()
+
+#         new_student = Student(
+#             name=data['name'],
+#             age=data['age']
+#         )
+#         db.session.add(new_student)
+#         db.session.commit()
+        
+#         # cs = Class_Student(class_details=Class(
+#         #     name = "new class",
+#         #     schedule = "Monday",
+#         #     room_number = "111",
+#         #     activity_id = 1,
+#         #     number_of_students = 5
+#         # ), student= new_student)
+#         cs=[]
+#         for new_class in data['classes']:
+#             cs.append(Class_Student(student=new_student, class_details=new_class))
+
+
+#         db.session.add_all(cs)
+#         db.session.commit()
+
+#         return make_response(new_student.to_dict(), 201)
+
 class Students(Resource):
 
     def get(self):
@@ -59,11 +92,21 @@ class Students(Resource):
             name=data['name'],
             age=data['age']
         )
-
         db.session.add(new_student)
+        db.session.commit()
+        
+        # Create relationships with selected classes
+        cs = []
+        for class_id in data['classes']:
+            class_details = Class.query.get(class_id)  # Fetch class details by ID
+            if class_details:
+                cs.append(Class_Student(student=new_student, class_details=class_details))
+
+        db.session.add_all(cs)
         db.session.commit()
 
         return make_response(new_student.to_dict(), 201)
+
     
 class TeachersClasses(Resource):
 
