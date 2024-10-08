@@ -12,40 +12,97 @@ from config import app, db, api
 # Add your model imports
 from models import Student, Teacher, Class, Activity, Class_Student, Class_Teacher
 
-class StudentByID(Resource):
+# class StudentByID(Resource):
 
+#     def get(self, id):
+#         student = Student.query.filter_by(id=id).first()
+#         if student:
+#             return make_response(jsonify(student.to_dict()), 200)
+#         else:
+#             return make_response({"message":"record not found"},404)
+
+#     def patch(self, id):
+#         data = request.get_json()
+#         student = Student.query.filter_by(id=id).first()
+
+#         if student:
+#             # Update student attributes
+#             for attr in ['name', 'age']:
+#                 if attr in data:
+#                     setattr(student, attr, data[attr])
+
+#             # Handle class updates
+#             if 'class_students' in data:
+#                 # Clear existing class relationships
+#                 student.class_students.clear()
+                
+#                 # Add new classes
+#                 for class_data in data['class_students']:
+#                     # Assuming class_data contains the id of the class
+#                     class_details = Class.query.filter_by(id=class_data['id']).first()
+#                     if class_details:
+#                         student.class_students.append(Class_Student(student=student, class_details=class_details))
+            
+#             db.session.commit()
+#             return make_response(student.to_dict(), 200)
+#         else:
+#             return make_response({"message": "record not found"}, 404)
+
+#     def delete(self, id):
+#         student = Student.query.filter_by(id=id).first()
+#         if student:
+#             db.session.delete(student)
+#             db.session.commit()
+
+#             return make_response('', 204)
+#         else:
+#             return make_response({"message":"record not found"},404)
+        
+
+class StudentByID(Resource):
+    
     def get(self, id):
         student = Student.query.filter_by(id=id).first()
         if student:
             return make_response(jsonify(student.to_dict()), 200)
         else:
-            return make_response({"message":"record not found"},404)
+            return make_response({"message": "record not found"}, 404)
 
     def patch(self, id):
         data = request.get_json()
-
         student = Student.query.filter_by(id=id).first()
+
         if student:
-            for attr in data:
-                setattr(student, attr, data[attr])
+            # Update student attributes
+            for attr in ['name', 'age']:
+                if attr in data:
+                    setattr(student, attr, data[attr])
 
-            db.session.add(student)
+            # Handle class updates
+            if 'class_students' in data:
+                # Clear existing class relationships
+                student.class_students.clear()
+                
+                # Add new classes
+                for class_data in data['class_students']:
+                    class_details = Class.query.filter_by(id=class_data['class_details']['id']).first()
+                    if class_details:
+                        student.class_students.append(Class_Student(student=student, class_details=class_details))
+            
             db.session.commit()
-
             return make_response(student.to_dict(), 200)
         else:
-            return make_response({"message":"record not found"},404)
+            return make_response({"message": "record not found"}, 404)
 
     def delete(self, id):
         student = Student.query.filter_by(id=id).first()
         if student:
             db.session.delete(student)
             db.session.commit()
-
             return make_response('', 204)
         else:
-            return make_response({"message":"record not found"},404)
-        
+            return make_response({"message": "record not found"}, 404)
+
 # class Students(Resource):
 
 #     def get(self):

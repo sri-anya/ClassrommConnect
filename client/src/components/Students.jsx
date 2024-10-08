@@ -6,20 +6,20 @@ const Students = () => {
 
     const handleRemove = async (studentId) => {
         try {
-          const response = await fetch(`/api/students/${studentId}`, {
-            method: 'DELETE',
-          });
-          
-          if (response.ok) {
-            setStudents(prev => prev.filter(student => student.id !== studentId));
-            console.log(`Deleted student with ID: ${ticketId}`);
-          } else {
-            console.error('Error deleting ticket');
-          }
+            const response = await fetch(`/api/students/${studentId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                setStudents(prev => prev.filter(student => student.id !== studentId));
+                console.log(`Deleted student with ID: ${ticketId}`);
+            } else {
+                console.error('Error deleting ticket');
+            }
         } catch (error) {
-          console.error('Error deleting ticket:', error);
+            console.error('Error deleting ticket:', error);
         }
-      };
+    };
 
     return (
         <div className="absolute right-20 w-2/3 p-4">
@@ -50,7 +50,7 @@ const Students = () => {
                                     {student.class_students && student.class_students.length > 0 ? (
                                         student.class_students.map((classStudent, index) => (
                                             <span key={classStudent.id}>
-                                                {classStudent.class_details.name} 
+                                                {classStudent.class_details.name}
                                                 {index < student.class_students.length - 1 ? ', ' : ''}
                                             </span>
                                         ))

@@ -221,8 +221,9 @@ const AddStudent = () => {
             <h1 className="text-2xl font-bold mb-4 text-center">Add Student</h1>
             <form onSubmit={handleSubmit} className="max-w-md mx-auto">
                 <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Name</label>
+                    <label  className="block text-gray-700 mb-2">Name</label>
                     <input
+                       
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
