@@ -20,7 +20,6 @@ const Students = () => {
             console.error('Error deleting ticket:', error);
         }
     };
-
     return (
         <div className="absolute right-20 w-2/3 p-4">
             <div className="mb-11 ml-96">

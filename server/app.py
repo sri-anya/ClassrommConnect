@@ -59,6 +59,50 @@ from models import Student, Teacher, Class, Activity, Class_Student, Class_Teach
 #             return make_response({"message":"record not found"},404)
         
 
+# class StudentByID(Resource):
+    
+#     def get(self, id):
+#         student = Student.query.filter_by(id=id).first()
+#         if student:
+#             return make_response(jsonify(student.to_dict()), 200)
+#         else:
+#             return make_response({"message": "record not found"}, 404)
+
+#     def patch(self, id):
+#         data = request.get_json()
+#         student = Student.query.filter_by(id=id).first()
+
+#         if student:
+#             # Update student attributes
+#             for attr in ['name', 'age']:
+#                 if attr in data:
+#                     setattr(student, attr, data[attr])
+
+#             # Handle class updates
+#             if 'class_students' in data:
+#                 # Clear existing class relationships
+#                 student.class_students.clear()
+                
+#                 # Add new classes
+#                 for class_data in data['class_students']:
+#                     class_details = Class.query.filter_by(id=class_data['class_details']['id']).first()
+#                     if class_details:
+#                         student.class_students.append(Class_Student(student=student, class_details=class_details))
+            
+#             db.session.commit()
+#             return make_response(student.to_dict(), 200)
+#         else:
+#             return make_response({"message": "record not found"}, 404)
+
+#     def delete(self, id):
+#         student = Student.query.filter_by(id=id).first()
+#         if student:
+#             db.session.delete(student)
+#             db.session.commit()
+#             return make_response('', 204)
+#         else:
+#             return make_response({"message": "record not found"}, 404)
+
 class StudentByID(Resource):
     
     def get(self, id):
@@ -83,9 +127,14 @@ class StudentByID(Resource):
                 # Clear existing class relationships
                 student.class_students.clear()
                 
-                # Add new classes
-                for class_data in data['class_students']:
-                    class_details = Class.query.filter_by(id=class_data['class_details']['id']).first()
+                # Add new classes with a maximum limit of 5
+                class_ids = [class_data['class_details']['id'] for class_data in data['class_students']]
+                
+                if len(class_ids) > 5:
+                    return make_response({"message": "Cannot enroll in more than 5 classes."}, 400)
+
+                for class_id in class_ids:
+                    class_details = Class.query.filter_by(id=class_id).first()
                     if class_details:
                         student.class_students.append(Class_Student(student=student, class_details=class_details))
             
@@ -103,38 +152,6 @@ class StudentByID(Resource):
         else:
             return make_response({"message": "record not found"}, 404)
 
-# class Students(Resource):
-
-#     def get(self):
-#         students = [student.to_dict() for student in Student.query.all()]
-#         return make_response(jsonify(students), 200)
-    
-#     def post(self):
-#         data = request.get_json()
-
-#         new_student = Student(
-#             name=data['name'],
-#             age=data['age']
-#         )
-#         db.session.add(new_student)
-#         db.session.commit()
-        
-#         # cs = Class_Student(class_details=Class(
-#         #     name = "new class",
-#         #     schedule = "Monday",
-#         #     room_number = "111",
-#         #     activity_id = 1,
-#         #     number_of_students = 5
-#         # ), student= new_student)
-#         cs=[]
-#         for new_class in data['classes']:
-#             cs.append(Class_Student(student=new_student, class_details=new_class))
-
-
-#         db.session.add_all(cs)
-#         db.session.commit()
-
-#         return make_response(new_student.to_dict(), 201)
 
 class Students(Resource):
 

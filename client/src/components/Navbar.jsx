@@ -1,9 +1,12 @@
 // src/Navbar.js
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const Navbar = ({ teacher, setTeacher }) => {
+
+    const location = useLocation();
+
     const [welcome, setWelcome] = useState(true)
     function handleLogout() {
         console.log("clicked logout")
@@ -18,7 +21,6 @@ const Navbar = ({ teacher, setTeacher }) => {
             }
         });
     }
-
     return (
         <nav className=" bg-blue-800 p-4 sticky top-0 shadow ">
             <div className="flex justify-between items-center max-w-6xl mx-auto">
@@ -65,7 +67,7 @@ const Navbar = ({ teacher, setTeacher }) => {
                         </li>
                     </ul>
                 </div>
-                {welcome ? <div className='w-1/2 fixed left-96 top-72 pr-0 '>
+                {location.pathname === '/' && welcome  ? <div className='w-1/2 fixed left-96 top-72 pr-0 '>
                     <h1 className='text-8xl text-wrap'>Welcome to your Classroom Management Tool</h1>
 
                 </div> : null}

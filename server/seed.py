@@ -53,11 +53,11 @@ if __name__ == "__main__":
 
         # Create some classes
         classes = []
-        for _ in range(5):
+        for _ in range(8):
             class_ = Class(
-                name=random.choice(["German", "English", "Latin", "Spanish", "Math", "Science","Music", "Drama"]).capitalize() + " Class",
+                name=random.choice(["German", "English", "Latin", "Spanish", "Math", "Science","Music", "Drama", "New", "Computer Science", "Magic", "Art"]).capitalize() + " Class",
                 schedule=f"{random.choice(DAYS_OF_WEEK)} ",
-                room_number=str(random.randint(101, 110)),
+                room_number=str(random.randint(101, 120)),
                 number_of_students = 10,
                 activity_id=random.choice(activities).id  # Assign random activity
             )
