@@ -2,12 +2,16 @@ import React,{useState, useEffect} from "react";
 import Login from "./components/Login";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import { useSelector, useDispatch } from 'react-redux'
+import { setClasses } from './redux/Classes/ClassesSlice';
 
 export default function App() {
 
   const [teacher, setTeacher] = useState(null);
-  const [classes, setClasses] = useState([]);
+  // const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
+  const dispatch = useDispatch();
+
 
   useEffect(() => {
     fetch("/api/check_session").then((response) => {
@@ -23,14 +27,15 @@ export default function App() {
       try {
         const data = await fetch("/api/classes");
         const response = await data.json();
-        setClasses(response);
+        // setClasses(response);
+        dispatch(setClasses(response));
 
       } catch (error) {
         console.error("Error fetching tickets:", error);
       }
     };
     fetchClasses();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
 
@@ -53,7 +58,7 @@ export default function App() {
   return (
     <>
      <Navbar teacher={teacher} setTeacher={setTeacher} />
-     <Outlet context={{ teacher, setTeacher, classes, setClasses, students, setStudents }} />
+     <Outlet context={{ teacher, setTeacher, students, setStudents }} />
     </>
   )
 }
