@@ -59,6 +59,12 @@ class Student(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     age = db.Column(db.Integer, nullable=False)
+
+    @validates('age')
+    def validate_email(self, key, age):
+        if int(age)<0 or int(age)>10:
+            raise ValueError("Failed age validation")
+        return age
     
     #Relationships: Many-to-many with Class
     class_students = db.relationship(
