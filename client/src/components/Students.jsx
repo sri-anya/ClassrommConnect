@@ -1,8 +1,31 @@
-import React from 'react';
-import { useOutletContext, Link } from 'react-router-dom';
+import React,{useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import { setStudents, removeStudent } from "../redux/students/StudentsSlice";
+import { Link } from "react-router-dom";
 
 const Students = () => {
-    const { students, setStudents } = useOutletContext();
+    //const { students, setStudents } = useOutletContext();
+    const students = useSelector((state) => state.students.students);
+    const dispatch = useDispatch();
+
+    // Fetch students when the component mounts or when needed
+    useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                const response = await fetch('/api/students');
+                if (response.ok) {
+                    const data = await response.json();
+                    dispatch(setStudents(data)); // Update Redux store with new data
+                } else {
+                    console.error('Error fetching students');
+                }
+            } catch (error) {
+                console.error('Error fetching students:', error);
+            }
+        };
+
+        fetchStudents();
+    }, [dispatch]);
 
     const handleRemove = async (studentId) => {
         try {
@@ -11,7 +34,8 @@ const Students = () => {
             });
 
             if (response.ok) {
-                setStudents(prev => prev.filter(student => student.id !== studentId));
+                //(setStudents(prev => prev.filter(student => student.id !== studentId)));
+                dispatch(removeStudent(studentId))
                 console.log(`Deleted student with ID: ${ticketId}`);
             } else {
                 console.error('Error deleting ticket');

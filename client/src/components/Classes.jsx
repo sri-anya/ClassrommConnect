@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import { useOutletContext } from "react-router-dom";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 const Classes = () => {
-    // const { classes } = useOutletContext();
     const classes = useSelector((state) => state.classes.classes)
-    console.log(classes)
-
     const [showStudentsIndex, setShowStudentsIndex] = useState(null);
 
     const toggleStudents = (index) => {

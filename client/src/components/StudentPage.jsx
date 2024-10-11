@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useOutletContext } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setStudents,updateStudent } from "../redux/students/StudentsSlice";
 
 const StudentPage = () => {
     const { studentId } = useParams();
-    const { students, setStudents, classes } = useOutletContext();
     const [student, setStudent] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
@@ -12,11 +12,34 @@ const StudentPage = () => {
         age: '',
         selectedClasses: []
     });
+    const students = useSelector((state) => state.students.students);
+    
+    const dispatch = useDispatch();
+    const classes = useSelector((state) => state.classes.classes);
     const [isSelected, setIsSelected] = useState({}); // State to track selected classes
+    
     const navigate = useNavigate();
-
     useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                const response = await fetch('/api/students');
+                if (response.ok) {
+                    const data = await response.json();
+                    dispatch(setStudents(data)); // Update Redux store with new data
+                } else {
+                    console.error('Error fetching students');
+                }
+            } catch (error) {
+                console.error('Error fetching students:', error);
+            }
+        };
+
+        fetchStudents();
+    }, [isEditing]);
+    useEffect(() => {
+        console.log("rendered")
         const foundStudent = students.find(s => s.id === parseInt(studentId));
+       
         if (foundStudent) {
             setStudent(foundStudent);
             const selectedClasses = foundStudent.class_students.map(cls => cls.class_details.id);
@@ -32,9 +55,10 @@ const StudentPage = () => {
                 selectedState[cls.id] = selectedClasses.includes(cls.id);
             });
             setIsSelected(selectedState);
+            
         }
-    }, [studentId, students, classes]);
-
+    }, [studentId, students, classes, student, isEditing]);
+    
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
     };
@@ -80,67 +104,12 @@ const StudentPage = () => {
                 }
             }
 
-            console.log(finalClasses); // Log the updated classes
+            console.log(finalClasses); 
 
             return { ...prevData, selectedClasses: finalClasses };
         });
     };
-    // const handleChange = (e) => {
-    //     const { value, checked } = e.target;
-
-    //     // Update the isSelected state
-    //     setIsSelected(prev => ({
-    //         ...prev,
-    //         [value]: checked
-    //     }));
-
-    //     // Prepare the new selection based on current check
-    //     const newSelection = checked 
-    //         ? [...formData.selectedClasses, value] 
-    //         : formData.selectedClasses.filter(id => id !== value);
-
-    //     // Check if adding the new class exceeds the limit of 5
-    //     if (newSelection.length > 5) {
-    //         alert('Cannot select more than five classes.');
-    //         // Prevent adding the new class to the selection
-    //         return;
-    //     }
-
-    //     // Update formData with the valid selection
-    //     setFormData(prevData => ({
-    //         ...prevData,
-    //         selectedClasses: newSelection
-    //     }));
-
-    //     // Ensure at least one class is selected
-    //     if (newSelection.length === 0 && !checked) {
-    //         alert('Student should be enrolled in at least one class.');
-    //         // Restore the last checked class if all are unchecked
-    //         setFormData(prevData => {
-    //                     // Filter selectedClasses to include only checked classes
-    //                     const finalClasses = classes
-    //                         .filter(cls => isSelected[cls.id] || cls.id === value && checked)
-    //                         .map(cls => cls.id);
-            
-    //                     // Ensure at least one class is selected
-    //                     if (finalClasses.length === 0) {
-    //                         alert('Student should be enrolled in at least one class.');
-    //                         if (!checked) {
-    //                             // Restore the last checked class if all are unchecked
-    //                             finalClasses.push(value);
-    //                         }
-    //                     }
-            
-    //                     console.log(finalClasses); // Log the updated classes
-            
-    //                     return { ...prevData, selectedClasses: finalClasses };
-    //                 })
-    //         // setIsSelected(prev => ({
-    //         //     ...prev,
-    //         //     [value]: true // Keep the checkbox checked
-    //         // }));
-    //     }
-    // };
+   
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -162,9 +131,12 @@ const StudentPage = () => {
 
             if (response.ok) {
                 const updatedData = await response.json();
-                setStudents(prev => prev.map(s => (s.id === student.id ? updatedData : s)));
+                //(setStudents(prev => prev.map(s => (s.id === student.id ? updatedData : s))));
+                dispatch(updateStudent(updatedData))
+                //dispatch(setStudents(students))
+              
                 setStudent(updatedData);
-                setIsEditing(false);
+                setIsEditing(!isEditing);
             } else {
                 console.error('Error updating student');
             }

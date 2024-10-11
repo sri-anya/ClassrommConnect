@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { useOutletContext } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useSelector, useDispatch } from 'react-redux'
+import { addStudent } from "../redux/students/StudentsSlice";
 
 const AddStudent = () => {
-    const [name, setName] = useState('');
-    const [age, setAge] = useState('');
-    const [selectedClasses, setSelectedClasses] = useState([]);
+  
+    const classes = useSelector((state) => state.classes.classes);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setStudents, classes } = useOutletContext(); // Get classes from context
+ 
 
     const formSchema = yup.object().shape({
         name: yup.string().required("Must enter name"),
@@ -40,7 +41,8 @@ const AddStudent = () => {
             });
             if (response.ok) {
                 const new_student = await response.json();
-                setStudents((prevStudents) => [...prevStudents, new_student]); // Update students list
+                
+                dispatch(addStudent(new_student))
                 navigate('/students');
             } else {
                 console.error('Error adding student');
@@ -52,30 +54,7 @@ const AddStudent = () => {
     }
       });
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await fetch(`/api/students`, {
-    //             method: 'POST',
-    //             headers: { 'Content-Type': 'application/json' },
-    //             body: JSON.stringify({
-    //                 name: name,
-    //                 age: age,
-    //                 classes: selectedClasses // Include selected classes
-    //             }),
-    //         });
-    //         if (response.ok) {
-    //             const new_student = await response.json();
-    //             setStudents((prevStudents) => [...prevStudents, new_student]); // Update students list
-    //             navigate('/students');
-    //         } else {
-    //             console.error('Error adding student');
-    //             alert("Name should be unique and age should more than 0 and less than 10. Please check details!!")
-    //         }
-    //     } catch (error) {
-    //         console.error('Error adding student:', error);
-    //     }
-    // };
+ 
     const handleClassChange = (e) => {
         const { options } = e.target;
         const selected = [];
@@ -95,8 +74,6 @@ const AddStudent = () => {
                     <input
                        
                         type="text"
-                        // value={name}
-                        // onChange={(e) => setName(e.target.value)}
                         name="name"
                         value={formik.values.name}
                         onChange={formik.handleChange}
@@ -110,8 +87,6 @@ const AddStudent = () => {
                     <input
                         type="number"
                         name="age"
-                        // value={age}
-                        // onChange={(e) => setAge(e.target.value)}
                         value={formik.values.age}
                         onChange={formik.handleChange}
                         className="border border-gray-300 p-2 w-full"
@@ -119,21 +94,6 @@ const AddStudent = () => {
                     />
                 </div>
                 {formik.errors.age?<p style={{ color: "red" }}> {formik.errors.age}</p>:null}
-                {/* <div className="mb-4">
-                    <label for="classes" className="block text-gray-700 mb-2">Classes</label>
-                    <select name="classes"
-                        multiple="multiple"
-                        value={selectedClasses} // Set selected values
-                        onChange={handleClassChange}
-                        className="border border-gray-300 p-2 w-full"
-                    >
-                        {classes.map((cls) => (
-                            <option key={cls.id} value={cls.id}>
-                                {cls.name}
-                            </option>
-                        ))}
-                    </select>
-                </div> */}
                 <div className="mb-4">
                     <label htmlFor="classes" className="block text-gray-700 mb-2">Class</label>
                     <select

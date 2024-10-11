@@ -1,25 +1,32 @@
 import React,{useState, useEffect} from "react";
 import Login from "./components/Login";
-import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setClasses } from './redux/Classes/ClassesSlice';
+import { setStudents } from "./redux/students/StudentsSlice";
+import { Outlet } from "react-router-dom";
 
 export default function App() {
 
   const [teacher, setTeacher] = useState(null);
-  // const [classes, setClasses] = useState([]);
-  const [students, setStudents] = useState([]);
   const dispatch = useDispatch();
-
+ 
 
   useEffect(() => {
-    fetch("/api/check_session").then((response) => {
-      if (response.ok) {
-        response.json().then((teacher) => setTeacher(teacher));
+    // Check session to get the teacher details
+    const checkSession = async () => {
+      try {
+        const response = await fetch("/api/check_session");
+        if (response.ok) {
+          const teacher = await response.json();
+          setTeacher(teacher); // Dispatch the teacher to the Redux store
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
       }
-    });
-  }, []);
+    };
+    checkSession();
+  }, [dispatch]);
 
   useEffect(() => {
 
@@ -27,11 +34,10 @@ export default function App() {
       try {
         const data = await fetch("/api/classes");
         const response = await data.json();
-        // setClasses(response);
         dispatch(setClasses(response));
 
       } catch (error) {
-        console.error("Error fetching tickets:", error);
+        console.error("Error fetching classes:", error);
       }
     };
     fetchClasses();
@@ -43,22 +49,24 @@ export default function App() {
       try {
         const data = await fetch("/api/students");
         const response = await data.json();
-        setStudents(response);
+        dispatch(setStudents(response));
 
       } catch (error) {
-        console.error("Error fetching tickets:", error);
+        console.error("Error fetching students:", error);
       }
     };
     fetchStudents();
-  }, []);
+  }, [dispatch]);
+
 
   if (!teacher) return <Login onLogin={setTeacher} />;
 
 
   return (
     <>
+  
      <Navbar teacher={teacher} setTeacher={setTeacher} />
-     <Outlet context={{ teacher, setTeacher, students, setStudents }} />
+     <Outlet context={{ teacher, setTeacher}} />
     </>
   )
 }

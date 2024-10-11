@@ -1,10 +1,9 @@
 // src/Navbar.js
 
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useOutletContext } from 'react-router-dom'
 
 const Navbar = ({ teacher, setTeacher }) => {
-
     const location = useLocation();
 
     const [welcome, setWelcome] = useState(true)
