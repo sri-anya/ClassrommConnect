@@ -21,7 +21,7 @@ const Navbar = ({ teacher, setTeacher }) => {
         });
     }
     return (
-        <nav className=" bg-blue-800 p-4 sticky top-0 shadow ">
+        <nav className=" bg-blue-800 p-4 sticky top-0 shadow z-10 ">
             <div className="flex justify-between items-center max-w-6xl mx-auto">
                 <h1 className="text-white text-2xl font-bold">CLASSROOM CONNECT</h1>
                 <div className="flex items-center">
@@ -37,8 +37,8 @@ const Navbar = ({ teacher, setTeacher }) => {
 
                 </div>
             </div>
-            <div className="secondPart flex justify-between items-center">
-                <div className="bg-gray-800 text-white w-64 h-full fixed left-0 top-16 p-4">
+            <div className="secondPart flex">
+                <div className="bg-gray-800  text-white w-64 h-screen fixed left-0 top-16 py-72 px-16">
                     <ul>
                         <li className="mb-2">
                             <Link
